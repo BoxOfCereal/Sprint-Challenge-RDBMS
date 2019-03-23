@@ -10,5 +10,8 @@ server.get("/", (req, res) => {
 const projectsRoutes = require("./routes/projects");
 server.use("/api/projects", projectsRoutes);
 
+const actionsRoutes = require("./routes/actions");
+server.use("/api/actions", actionsRoutes);
+
 
 module.exports = server;
