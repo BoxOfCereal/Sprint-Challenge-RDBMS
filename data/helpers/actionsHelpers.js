@@ -29,9 +29,8 @@ module.exports = {
 			)
 			.from("joinContextsActions")
 			.innerJoin("actions", "actions.id", "joinContextsActions.action_id")
-			.innerJoin("contexts", "contexts.id", "joinContextsActions.context_id");
-		query.whereIn("contexts.context_name", contexts);
-		console.log(query.toSQL().toNative());
+			.innerJoin("contexts", "contexts.id", "joinContextsActions.context_id")
+			.whereIn("contexts.context_name", contexts);
 
 		return query;
 	},

@@ -5,9 +5,10 @@ const contextDb = require("../data/helpers/contextsHelpers.js");
 
 router.get("/", (req, res) => {
 	//if there's a context selection
+	// use ?contexts=["at_computer"] to select the contexts
 	if (req.query.contexts) {
 		const contexts = JSON.parse(req.query.contexts);
-		console.log(contexts);
+
 		db.getActionsByContext(contexts)
 			.then(actions => res.status(200).json(actions))
 			.catch(error => res.status(500).json({ error: error }));
