@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const db = require("../data/helpers/actionsHelpers.js");
-const contextDb = require("../data/helpers/contextsHelpers.js");
+const joinContextsActionsDb = require("../data/helpers/joinContextsActionsHelpers.js");
 
 router.get("/", (req, res) => {
 	//if there's a context selection
@@ -21,10 +21,35 @@ router.get("/", (req, res) => {
 	}
 });
 
+/* Returns
+{
+    "id": 1,
+    "project_id": 1,
+    "action_name": "test 1",
+    "action_desc": "this is a test description",
+    "action_completed": 0,
+    "contexts": [
+        {
+            "context_name": "at_computer"
+        },
+        {
+            "context_name": "at_home"
+        }
+    ]
+}
+*/
 router.get("/:id", (req, res) => {
 	const { id } = req.params;
+
+	//get the action and then add on the contexts
 	db.getById(id)
-		.then(action => res.status(200).json(action))
+		.then(action => {
+			const actionObject = { ...action[0] };
+			joinContextsActionsDb.getContextsActions(id).then(actions => {
+				actionObject.contexts = [...actions];
+				res.status(200).json(actionObject);
+			});
+		})
 		.catch(error =>
 			res.status(500).json({ error: "The action could not be retrieved." })
 		);
