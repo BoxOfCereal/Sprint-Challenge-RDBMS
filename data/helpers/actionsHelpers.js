@@ -18,6 +18,23 @@ module.exports = {
 			.from("actions")
 			.where({ project_id: id });
 	},
+	getActionsByContext: contexts => {
+		let query = db
+			.select(
+				"actions.id",
+				"actions.action_name",
+				"actions.action_desc",
+				"actions.action_completed",
+				"contexts.context_name"
+			)
+			.from("joinContextsActions")
+			.innerJoin("actions", "actions.id", "joinContextsActions.action_id")
+			.innerJoin("contexts", "contexts.id", "joinContextsActions.context_id");
+		query.whereIn("contexts.context_name", contexts);
+		console.log(query.toSQL().toNative());
+
+		return query;
+	},
 	add: action => {
 		return db
 			.insert(action)

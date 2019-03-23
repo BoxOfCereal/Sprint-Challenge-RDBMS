@@ -1,13 +1,23 @@
 const express = require("express");
 const router = express.Router();
 const db = require("../data/helpers/actionsHelpers.js");
+const contextDb = require("../data/helpers/contextsHelpers.js");
 
 router.get("/", (req, res) => {
-	db.getAll()
-		.then(actions => res.status(200).json(actions))
-		.catch(error =>
-			res.status(500).json({ error: "The actions could not be retrieved." })
-		);
+	//if there's a context selection
+	if (req.query.contexts) {
+		const contexts = JSON.parse(req.query.contexts);
+		console.log(contexts);
+		db.getActionsByContext(contexts)
+			.then(actions => res.status(200).json(actions))
+			.catch(error => res.status(500).json({ error: error }));
+	} else {
+		db.getAll()
+			.then(actions => res.status(200).json(actions))
+			.catch(error =>
+				res.status(500).json({ error: "The actions could not be retrieved." })
+			);
+	}
 });
 
 router.get("/:id", (req, res) => {
