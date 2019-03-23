@@ -13,15 +13,14 @@ router.get("/", (req, res) => {
 
 router.get("/:id", (req, res) => {
 	const { id } = req.params;
-	
+
 	db.getById(id)
 		.then(project => {
-			const projectObject= {...project[0]};
-			actionDb.getActionsByProject(id).then(actions=>{
+			const projectObject = { ...project[0] };
+			actionDb.getActionsByProject(id).then(actions => {
 				projectObject.actions = [...actions];
-				res.status(200).json(projectObject)
-			})
-			
+				res.status(200).json(projectObject);
+			});
 		})
 		.catch(error =>
 			res.status(500).json({ error: "The project could not be retrieved." })
@@ -37,6 +36,35 @@ router.post("/", (req, res) => {
 		.catch(error =>
 			res.status(500).json({ error: "The project could not be created." })
 		);
+});
+
+router.put("/:id", (req, res) => {
+	const updatedProject = req.body;
+	const { id } = req.params;
+	db.update(id, updatedProject)
+		.then(count => {
+			if (count) {
+				db.getById(id).then(project => res.status(200).json(project));
+			} else {
+				res.status(404).json({ error: "The project does not exist." });
+			}
+		})
+		.catch(error =>
+			res.status(500).json({ error: "The project could not be updated." })
+		);
+});
+
+router.delete("/:id", (req, res) => {
+	const { id } = req.params;
+	db.remove(id).then(count => {
+		if (count) {
+			res
+				.status(200)
+				.json({ message: "The project was successfully deleted." });
+		} else {
+			res.status(404).json({ error: "The project does not exist." });
+		}
+	});
 });
 
 module.exports = router;
