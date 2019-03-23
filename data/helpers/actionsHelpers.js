@@ -18,10 +18,20 @@ module.exports = {
 			.from("actions")
 			.where({ project_id: id });
 	},
-	add: project => {
+	add: action => {
 		return db
-			.insert(project)
+			.insert(action)
 			.into("actions")
 			.then(ids => ids[0]);
+	},
+	update: (id, action) => {
+		return db("actions")
+			.where({ id: id })
+			.update(action);
+	},
+	remove: id => {
+		return db("actions")
+			.where({ id: Number(id) })
+			.del();
 	}
 };

@@ -6,9 +6,7 @@ router.get("/", (req, res) => {
 	db.getAll()
 		.then(actions => res.status(200).json(actions))
 		.catch(error =>
-			res
-				.status(500)
-				.json({ error: "The actions could not be retrieved." })
+			res.status(500).json({ error: "The actions could not be retrieved." })
 		);
 });
 
@@ -17,9 +15,7 @@ router.get("/:id", (req, res) => {
 	db.getById(id)
 		.then(action => res.status(200).json(action))
 		.catch(error =>
-			res
-				.status(500)
-				.json({ error: "The action could not be retrieved." })
+			res.status(500).json({ error: "The action could not be retrieved." })
 		);
 });
 
@@ -32,6 +28,33 @@ router.post("/", (req, res) => {
 		.catch(error =>
 			res.status(500).json({ error: "The action could not be created." })
 		);
+});
+
+router.put("/:id", (req, res) => {
+	const updatedAction = req.body;
+	const { id } = req.params;
+	db.update(id, updatedAction)
+		.then(count => {
+			if (count) {
+				db.getById(id).then(action => res.status(200).json(action));
+			} else {
+				res.status(404).json({ error: "The action does not exist." });
+			}
+		})
+		.catch(error =>
+			res.status(500).json({ error: "The action could not be updated." })
+		);
+});
+
+router.delete("/:id", (req, res) => {
+	const { id } = req.params;
+	db.remove(id).then(count => {
+		if (count) {
+			res.status(200).json({ message: "The action was successfully deleted." });
+		} else {
+			res.status(404).json({ error: "The action does not exist." });
+		}
+	});
 });
 
 module.exports = router;
