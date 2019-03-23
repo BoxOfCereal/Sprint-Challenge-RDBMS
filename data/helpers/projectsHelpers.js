@@ -6,7 +6,14 @@ module.exports = {
 	},
 	getById: id => {
 		return db("projects")
-		.where({ id: id })
-		.innerJoin("actions","actions.project_id","projects.id");
-	}
+		.where({ "projects.id": id })
+		.innerJoin("actions","actions.project_id","=","projects.id");
+	},
+	add: project => {
+		return db
+			.insert(project)
+			.into("projects")
+			.then(ids => ids[0]);
+	},
+
 };

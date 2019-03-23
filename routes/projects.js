@@ -19,4 +19,15 @@ router.get("/:id", (req, res) => {
 		);
 });
 
+router.post("/", (req, res) => {
+	const newProject = req.body;
+	db.add(newProject)
+		.then(id => {
+			db.getById(id).then(project => res.status(201).json(project));
+		})
+		.catch(error =>
+			res.status(500).json({ error: "The project could not be created." })
+		);
+});
+
 module.exports = router;
